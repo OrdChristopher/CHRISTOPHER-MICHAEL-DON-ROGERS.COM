@@ -2,7 +2,6 @@
   class data extends \PDO {
     private $primary_key = null;
     private $primary_value = null;
-    private $database = null;
     private $handle = null;
     private $table = null;
     private $host = null;
@@ -16,14 +15,15 @@
       ini_set ( 'max_execution_time', 0 );
       ini_set ( 'memory_limit', '512m' );
       set_exception_handler ( [ __CLASS__, 'exceptions' ] );
-      $this->database = $database;
+	  define ( 'DB', getcwd  ( ) . "/data/db/{$database}.db" );
       $this->handle = $handle;
       $this->table = $table;
       $this->host = $host;
       $this->key = $key;
 	  //"mysql:host={$this->host}"
 	  //sqlite:/tmp/foo.db
-      parent::__construct ( "sqlite:./data/db/{$database}.db", $this->handle, $this->key, [ \PDO::MYSQL_ATTR_FOUND_ROWS => true ] );
+	  $this->nop_db ( );
+      parent::__construct ( "sqlite:" . DB, $this->handle, $this->key );
       restore_exception_handler ( );
       //$this->primary_key = $this->getPrimaryKey ( ); // find the primary key of table, and set it within.
       return $this;
@@ -31,7 +31,16 @@
 	
 	public function __destruct ( ) {
 		
-		unlink ( "./data/db/{$this->database}.db" );
+		$this->nop_db ( );
+		
+	}
+	
+	public function nop_db ( )
+	{
+		
+		$db = fopen( DB, 'w' );
+		fwrite ( $db, "" );
+		fclose ( $db );
 		
 	}
     
