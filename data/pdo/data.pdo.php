@@ -12,7 +12,7 @@
       die ( 'Uncaught exception: ' . var_dump ( $exception ) );
     }
     
-    public function __construct ( $host, $database, $handle, $key, $table ) {
+    public function __construct ( $host, $handle, $key, $table, $database = 'foo' ) {
       ini_set ( 'max_execution_time', 0 );
       ini_set ( 'memory_limit', '512m' );
       set_exception_handler ( [ __CLASS__, 'exceptions' ] );
@@ -21,7 +21,9 @@
       $this->table = $table;
       $this->host = $host;
       $this->key = $key;
-      parent::__construct ( "mysql:host={$this->host}" . ( $database != null ? ";dbname={$database}" : '' ), $this->handle, $this->key, [ \PDO::MYSQL_ATTR_FOUND_ROWS => true ] );
+	  //"mysql:host={$this->host}"
+	  //sqlite:/tmp/foo.db
+      parent::__construct ( "sqlite:./data/db/{$database}.db", $this->handle, $this->key, [ \PDO::MYSQL_ATTR_FOUND_ROWS => true ] );
       restore_exception_handler ( );
       //$this->primary_key = $this->getPrimaryKey ( ); // find the primary key of table, and set it within.
       return $this;
