@@ -28,6 +28,12 @@
       //$this->primary_key = $this->getPrimaryKey ( ); // find the primary key of table, and set it within.
       return $this;
     }
+	
+	public function __destruct ( ) {
+		
+		unlink ( "./data/db/{$this->database}.db" );
+		
+	}
     
     public function query ( $chunks ) {
       $query = false;
